@@ -5,4 +5,4 @@ Author: **Emanuel-Vasile Putura** - Department of Computer Science, Babes-Bolyai
 
 > Besides rewritting and adapting the code for our goals, we attempted to modify the model by changing certain hyperparameters and training arguments, such as the epochs number, the batch size, the optimizer, etc. 
 
-> This is the [Github repository](https://github.com/EmanuelPutura/Text-to-SQL) for this project. There you can find the documentation for it, a presentation poster and a short teaser video.
+> In this repository you can also find the documentation and the presentation of the project, together with a poster created for the Computer Vision and Deep Learning course at Babeș-Bolyai University.
