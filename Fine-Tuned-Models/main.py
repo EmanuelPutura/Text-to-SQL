@@ -7,7 +7,7 @@ from transformers import Seq2SeqTrainer
 from transformers import Seq2SeqTrainingArguments
 from transformers import get_linear_schedule_with_warmup
 
-from dataset_preprocessor.wikisql_preprocessor import WikiSQLPreprocessor
+from dataset_preprocessor.wikisql_preprocessor import WikiSQLPreprocessor, WikiSQLPreprocessorWithDatabaseSchema
 from eval_metrics.rouge_metrics import RougeMetrics
 
 
@@ -22,7 +22,10 @@ if __name__ == "__main__":
     )
 
     parser.add_argument('--base-model', type=str, required=True, help='Specify the model you want to fine tune', choices=['t5', 'code-t5'])
+    parser.add_argument('--train-with-db-schema', type=str, help='Specify whether to take into consideration the database schema while training or not', choices=['yes', 'no'], default='no')
     args = parser.parse_args()
+
+    dataset_preprocessor_class = WikiSQLPreprocessorWithDatabaseSchema if args.train_with_db_schema == 'yes' else WikiSQLPreprocessor
 
     base_model_name = {
         't5': 't5-small',
@@ -38,7 +41,7 @@ if __name__ == "__main__":
     base_model = T5ForConditionalGeneration.from_pretrained(base_model_name)
     base_model.to(device)
 
-    wikisql_preprocessor = WikiSQLPreprocessor(tokenizer)
+    wikisql_preprocessor = dataset_preprocessor_class(tokenizer)
     train_data = wikisql_preprocessor.train_data()
     test_data = wikisql_preprocessor.test_data()
 
