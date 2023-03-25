@@ -1,5 +1,6 @@
 import argparse
 import torch
+import logging
 
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 from transformers import Seq2SeqTrainer
@@ -11,6 +12,10 @@ from eval_metrics.rouge_metrics import RougeMetrics
 
 
 if __name__ == "__main__":
+    logging.basicConfig(format='%(asctime)s : %(name)s - %(levelname)s : %(message)s')
+    logger = logging.getLogger('root')
+    logger.setLevel(logging.INFO)
+
     parser = argparse.ArgumentParser(
         prog='FineTunedModels',
         description='Fine-tuned models for the Text-to-SQL task',
@@ -25,7 +30,7 @@ if __name__ == "__main__":
     }.get(args.base_model, 't5-small')
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print("...running on {} device".format(device))
+    logger.info('Running on \'%s\' device', device)
 
     tokenizer = AutoTokenizer.from_pretrained(base_model_name, model_max_length=1024)
     rouge_metrics = RougeMetrics(tokenizer)
