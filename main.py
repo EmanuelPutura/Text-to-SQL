@@ -8,7 +8,7 @@ from transformers import Seq2SeqTrainingArguments
 from transformers import get_linear_schedule_with_warmup
 
 from dataset_preprocessor.wikisql_preprocessor import WikiSQLPreprocessor, WikiSQLPreprocessorWithDatabaseSchema
-from eval_metrics.rouge_metrics import RougeMetrics
+from eval.rouge_metrics import RougeMetrics
 
 
 if __name__ == "__main__":

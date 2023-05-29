@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Pretrained model
+Fine-Tuned-Models/pretrained/*
+web/sqlgen_server/pretrained
+uni_cvdl_project/*
+data/*
+pretrained/*
+eval/predictions/*
+**/.idea/
