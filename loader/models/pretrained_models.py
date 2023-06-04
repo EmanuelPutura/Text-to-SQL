@@ -36,7 +36,6 @@ class PretrainedModel5(PretrainedModel):
     @staticmethod
     def get_table_str(column_data_dict):
         header = column_data_dict['column_names']
-
         table_str = "Table(" + ", ".join([f"\'{h}\'" for h in header]) + ")"
         return table_str
 

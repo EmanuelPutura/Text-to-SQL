@@ -2,8 +2,9 @@ import json
 import chardet
 
 
-def parse_json_schema(file_storage):
+def get_table_schema_from_json(file_storage):
     data = json.load(file_storage)
+    table_name = data['name']
     column_data = data['columns']
 
     column_names = []
@@ -13,4 +14,4 @@ def parse_json_schema(file_storage):
         column_names.append(column_dict['name'])
         column_types.append(column_dict['type'])
 
-    return {'column_names': column_names, 'column_types': column_types}
+    return {'table_name': table_name, 'column_names': column_names, 'column_types': column_types}
