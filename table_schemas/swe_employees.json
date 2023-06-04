@@ -1,0 +1,29 @@
+{
+  "name": "table_swe_employees",
+  "columns": [
+    {
+      "name": "ID",
+      "type": "int"
+    },
+    {
+      "name": "Last name",
+      "type": "text"
+    },
+    {
+      "name": "First name",
+      "type": "text"
+    },
+    {
+      "name": "Age",
+      "type": "int"
+    },
+    {
+      "name": "Company",
+      "type": "text"
+    },
+    {
+      "name": "Salary",
+      "type": "real"
+    }
+  ]
+}

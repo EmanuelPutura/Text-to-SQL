@@ -135,3 +135,4 @@ data/*
 pretrained/*
 eval/predictions/*
 **/.idea/
+table_schemas/*

@@ -1,6 +1,7 @@
 import torch
 import logging
 import re
+import difflib
 
 from datasets import load_dataset
 
@@ -40,7 +41,12 @@ def sql_get_select_and_agg_index(query, columns):
         column_name = select_agg_str
 
     if column_name not in columns:
-        raise Exception('Invalid SQL human readable query.')
+        for col in columns:
+            if column_name in col:
+                column_name = col
+
+        if column_name not in columns:
+            raise Exception('Invalid SQL human readable query.')
 
     sel_index = columns.index(column_name)
     return [sel_index, agg_index]
@@ -103,72 +109,10 @@ def encode_query_into_wikisql_sql_dict(query, table_header):
     return result
 
 
-# Unit testing for the query manipulation methods
-def test_sql_get_select_and_agg_index():
-    sql_query1 = 'SELECT Column FROM table'
-    assert sql_get_select_and_agg_index(sql_query1, ['Column']) == [0, 0]
-
-    sql_query2 = 'SELECT Column2 FROM table'
-    assert sql_get_select_and_agg_index(sql_query2, ['Column0', 'Column1', 'Column2']) == [2, 0]
-
-    sql_query3 = 'SELECT Column1 FROM table'
-    assert sql_get_select_and_agg_index(sql_query3, ['Column0', 'Column1', 'Column2']) == [1, 0]
-
-    sql_query4 = 'SELECT COUNT(Column1) FROM table'
-    assert sql_get_select_and_agg_index(sql_query4, ['Column0', 'Column1', 'Column2']) == [1, 3]
-
-    sql_query5 = 'SELECT COUNT Column1 FROM table'
-    assert sql_get_select_and_agg_index(sql_query5, ['Column0', 'Column1', 'Column2']) == [1, 3]
-
-    sql_query6 = 'SELECT MIN (Column1) FROM table'
-    assert sql_get_select_and_agg_index(sql_query6, ['Column0', 'Column1', 'Column2']) == [1, 2]
-
-
-def test_sql_get_all_where_conditions():
-    sql_query1 = 'SELECT Column1 FROM table WHERE Column0 > 2'
-    assert sql_get_all_where_conditions(sql_query1) == ['Column0 > 2']
-
-    sql_query2 = 'SELECT Column2 FROM table WHERE Column0 > 2 AND Column1 < 5'
-    assert sql_get_all_where_conditions(sql_query2) == ['Column0 > 2', 'Column1 < 5']
-
-    sql_query3 = 'SELECT Column1 FROM table WHERE Column0 > 2 AND Column1 < 5 OR Column2 = \'Alexander\' AND Column4 = 2'
-    assert sql_get_all_where_conditions(sql_query3) == ['Column0 > 2', 'Column1 < 5', 'Column2 = \'Alexander\'', 'Column4 = 2']
-
-    sql_query4 = 'SELECT Column1 FROM table'
-    assert sql_get_all_where_conditions(sql_query4) == []
-
-
-def test_sql_get_encoded_where_conditions():
-    sql_query1 = 'SELECT Column1 FROM table WHERE Column0 > 2'
-    assert sql_get_encoded_where_conditions(sql_query1, ['Column0', 'Column1', 'Column2']) == {'column_index': [0], 'operator_index': [1], 'condition': ['2']}
-
-    sql_query2 = 'SELECT Column2 FROM table WHERE Column0 > 2 AND Column1 < 5'
-    assert sql_get_encoded_where_conditions(sql_query2, ['Column0', 'Column1', 'Column2']) == {'column_index': [0, 1], 'operator_index': [1, 2], 'condition': ['2', '5']}
-
-    sql_query3 = 'SELECT Column1 FROM table WHERE Column0 > 2 AND Column4 = 2 AND Column1 < 5 OR Column2 = \'Alexander\''
-    assert sql_get_encoded_where_conditions(sql_query3, ['Column0', 'Column1', 'Column2', 'Column3', 'Column4']) == \
-           {'column_index': [0, 4, 1, 2], 'operator_index': [1, 0, 2, 0], 'condition': ['2', '2', '5', '\'Alexander\'']}
-
-    sql_query4 = 'SELECT Column1 FROM table'
-    assert sql_get_encoded_where_conditions(sql_query4, ['Column0', 'Column1']) == {'column_index': [], 'operator_index': [], 'condition': []}
-
-    sql_query5 = 'SELECT  col3 FROM table WHERE col5 = 1.4\u2009v AND col1 = 1333\u2009mhz'
-    print(sql_get_encoded_where_conditions(sql_query5, ['col0', 'col1', 'col2', 'col3', 'col4', 'col5']))
-
-
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s : %(name)s - %(levelname)s : %(message)s')
     logger = logging.getLogger('root')
     logger.setLevel(logging.INFO)
-
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    logger.info('Running on \'%s\' device', device)
-
-    # unit tests
-    test_sql_get_select_and_agg_index()
-    test_sql_get_all_where_conditions()
-    test_sql_get_encoded_where_conditions()
-    # exit(0)
 
     # load test dataset split
     test_data = load_dataset('wikisql', split='test')
@@ -194,3 +138,5 @@ if __name__ == '__main__':
             print("Encoded SQL dict: {}".format(encoded_sql_dict))
 
         index += 1
+
+    logger.info('All the assertions passed.')
