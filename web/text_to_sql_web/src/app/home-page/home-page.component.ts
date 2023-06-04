@@ -107,6 +107,7 @@ export class HomePageComponent {
           new_option.value = table_name;
 
           select_table_schema_element?.appendChild(new_option);
+          this.selected_table_schema = table_name;
         }
       })).subscribe()
   }

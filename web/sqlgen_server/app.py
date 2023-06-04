@@ -35,7 +35,7 @@ class User(db.Model):
 
 class UserTableSchema(db.Model):
     table_name = db.Column(db.String(50), primary_key=True)
-    username = db.Column(db.String(50))
+    username = db.Column(db.String(50), primary_key=True)
     column_names = db.Column(db.String(100))
     column_types = db.Column(db.String(100))
 
@@ -99,7 +99,7 @@ def submit_schema():
     table_data_dict = get_table_schema_from_json(file_storage)
     table_name = table_data_dict['table_name']
 
-    table = UserTableSchema.query.filter_by(table_name=table_name).first()
+    table = UserTableSchema.query.filter_by(table_name=table_name, username=username).first()
     if not table:
         table = UserTableSchema(
             table_name=table_name,
