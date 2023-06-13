@@ -14,60 +14,7 @@ from lib.common import count_lines
 from formatter.wikisql_formatter import encode_query_into_wikisql_sql_dict
 
 
-def get_table_str_from_row_pretrained3(row_table):
-  header = row_table['header']
-  data_types = row_table['types']
-
-  table_str = "Table(" + ", ".join([f"{h}: {t}" for h, t in zip(header, data_types)]) + ")"
-  return table_str
-
-
-def get_table_str_from_row_pretrained4_5(row_table):
-    header = row_table['header']
-
-    table_str = "Table(" + ", ".join([f"\'{h}\'" for h in header]) + ")"
-    return table_str
-
-
-def prepare_natural_language_query_pretrained1(query, *args):
-    return query
-
-
-def prepare_natural_language_query_pretrained2(query, *args):
-    return 'translate to SQL: ' + query
-
-
-def prepare_natural_language_query_pretrained3(query, dataset_row, *args):
-    return 'translate to SQL the following natural language query: \'{}\', where the table is \'{}\''.format(query, get_table_str_from_row_pretrained3(dataset_row))
-
-
-def prepare_natural_language_query_pretrained4_5(query, dataset_row, *args):
-    return 'translate to SQL the following natural language query: \'{}\', where the table is \'{}\''.format(query, get_table_str_from_row_pretrained4_5(dataset_row))
-
-
-def translate_to_sql(device, model, tokenizer, nat_lang_prepare_func, *args):
-    inputs = tokenizer(nat_lang_prepare_func(*args), padding='longest', max_length=64, return_tensors='pt')
-    input_ids = inputs.input_ids.to(device)
-    attention_mask = inputs.attention_mask.to(device)
-    output = model.generate(input_ids, attention_mask=attention_mask, max_length=64)
-
-    return tokenizer.decode(output[0], skip_special_tokens=True)
-
-
-def store_predictions_in_file(device, test_data, model, tokenizer, file_path='predictions/pred1.txt'):
-    with open(file_path, 'w', encoding='utf-8') as file:
-        index = 0
-
-        for row in test_data:
-            predicted_query = translate_to_sql(device, model, tokenizer, prepare_natural_language_query_pretrained4_5, row['question'], row['table'])
-            file.write(predicted_query + '\n')
-
-            if index % 100 == 0:
-                logger.info('Storing predictions in file, row = {}'.format(index))
-            index += 1
-
-
-def load_predictions_from_file(file_path='predictions/pred1.txt'):
+def load_predictions_from_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         predictions = file.read().splitlines()
     return predictions
@@ -77,21 +24,6 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s : %(name)s - %(levelname)s : %(message)s')
     logger = logging.getLogger('root')
     logger.setLevel(logging.INFO)
-
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    logger.info('Running on \'%s\' device', device)
-
-    # load the pretrained model
-    PATH_TO_TRAINED_MODEL = "pretrained/model1206_firefox1"
-
-    tokenizer = AutoTokenizer.from_pretrained(PATH_TO_TRAINED_MODEL)
-    model = T5ForConditionalGeneration.from_pretrained(PATH_TO_TRAINED_MODEL)
-    model.to(device)
-
-    test_data = load_dataset('wikisql', split='test')
-
-    store_predictions_in_file(device, test_data, model, tokenizer, 'eval/predictions/pred_model1206_firefox1.txt')
-    exit(0)
 
     predictions = load_predictions_from_file('eval/predictions/pred_model1206_firefox1.txt')
     logger.info('All predictions were stored in memory ({} predictions in total).'.format(len(predictions)))
