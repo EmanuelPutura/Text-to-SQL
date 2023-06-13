@@ -1,8 +1,8 @@
 import {Component, ViewChild} from '@angular/core';
 import {AccountService, AlertService} from "../services";
-import {ModelMetadata} from "../../../../sqlgen_web/src/app/domain/model_metadata";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, map, Observable, of} from "rxjs";
+import {ModelMetadata} from "../models";
 
 @Component({ templateUrl: 'home-page.component.html' })
 export class HomePageComponent {

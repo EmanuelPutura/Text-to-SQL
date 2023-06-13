@@ -11,7 +11,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PRETRAINED_MODELS_PATH = os.path.join(CURRENT_DIR, '../pretrained/')
 
 METADATA_FILE_NAME = 'metadata.json'
-PRETRAINED_MODELS_MODULE_NAME = 'loader.models.pretrained_models'
+MODEL_INPUTS_MODULE_NAME = 'model_inputs.model_inputs'
 
 
 pretrained_models_dict = {}
@@ -44,7 +44,7 @@ def get_all_pretrained_models_metadata():
 
 def get_pretrained_model_class_from_dir(pretrained_model_dir_name):
     metadata = get_pretrained_model_metadata_from_dir(pretrained_model_dir_name)
-    module = importlib.import_module(PRETRAINED_MODELS_MODULE_NAME)
+    module = importlib.import_module(MODEL_INPUTS_MODULE_NAME)
     class_name = metadata['class_name']
 
     return getattr(module, class_name)

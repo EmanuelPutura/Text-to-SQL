@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import {ModelMetadata} from "../../../../sqlgen_web/src/app/domain/model_metadata";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, Observable, of} from "rxjs";
 import {AlertService} from "../services";
+import {ModelMetadata} from "../models";
 
 @Component({
   selector: 'app-guest-page',

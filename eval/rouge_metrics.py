@@ -1,9 +1,9 @@
-import evaluate
+from datasets import load_metric
 
 
 class RougeMetrics:
     def __init__(self, tokenizer):
-        self.__rouge = evaluate.load("rouge")
+        self.__rouge = load_metric("rouge")
         self.__tokenizer = tokenizer
 
     def compute_metrics(self, pred):
