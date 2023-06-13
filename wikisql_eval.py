@@ -67,20 +67,6 @@ def store_predictions_in_file(device, test_data, model, tokenizer, file_path='pr
             index += 1
 
 
-def store_predictions_in_file_from_backup(device, test_data, model, tokenizer, start_index, file_path='predictions/pred1.txt'):
-    with open(file_path, 'a', encoding='utf-8') as file:
-        index = start_index
-        while index < len(test_data):
-            row = test_data[index]
-
-            predicted_query = translate_to_sql(device, model, tokenizer, prepare_natural_language_query_pretrained4_5, row['question'], row['table'])
-            file.write(predicted_query + '\n')
-
-            if index % 100 == 0:
-                logger.info('Storing predictions in file, row = {}'.format(index))
-            index += 1
-
-
 def load_predictions_from_file(file_path='predictions/pred1.txt'):
     with open(file_path, 'r', encoding='utf-8') as file:
         predictions = file.read().splitlines()
@@ -105,7 +91,8 @@ if __name__ == '__main__':
     test_data = load_dataset('wikisql', split='test')
 
     store_predictions_in_file(device, test_data, model, tokenizer, 'eval/predictions/pred_model1206_firefox1.txt')
-    # store_predictions_in_file_from_backup(device, test_data, model, tokenizer, 8184)
+    exit(0)
+
     predictions = load_predictions_from_file('eval/predictions/pred_model1206_firefox1.txt')
     logger.info('All predictions were stored in memory ({} predictions in total).'.format(len(predictions)))
 

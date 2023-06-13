@@ -20,8 +20,8 @@ if __name__ == "__main__":
     )
 
     parser.add_argument('--base-model', type=str, required=True, help='Specify the model you want to fine tune', choices=['t5', 'code-t5'])
-    parser.add_argument('--input-format-class', type=str, help='Specify the model input format, defined in a class from the model_inputs module')
-    parser.add_argument('--pretrained-path', type=str, help='Specify where to store the model after training')
+    parser.add_argument('--input-format-class', type=str, required=True, help='Specify the model input format, defined in a class from the model_inputs module')
+    parser.add_argument('--pretrained-path', type=str, required=True, help='Specify where to store the model after training')
     args = parser.parse_args()
 
     base_model_name = {
