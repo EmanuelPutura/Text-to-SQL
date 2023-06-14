@@ -3,15 +3,15 @@ import logging
 import json
 import re
 import random
+import argparse
 
 from datasets import load_dataset
-from transformers import AutoTokenizer, T5ForConditionalGeneration
 
 from lib.dbengine import DBEngine
 from lib.query import Query
 from lib.common import count_lines
 
-from formatter.wikisql_formatter import encode_query_into_wikisql_sql_dict
+from formatter.wikisql_formatter import WikiSQLFormatter
 
 
 def load_predictions_from_file(file_path):
@@ -25,7 +25,18 @@ if __name__ == '__main__':
     logger = logging.getLogger('root')
     logger.setLevel(logging.INFO)
 
-    predictions = load_predictions_from_file('eval/predictions/pred_model1206_firefox1.txt')
+    parser = argparse.ArgumentParser(
+        prog='Text-to-SQL',
+        description='WikiSQL evaluation script',
+    )
+
+    parser.add_argument('--predictions-path', type=str, required=True, help='Specify the location of the model predictions')
+    args = parser.parse_args()
+
+    predictions_path = args.predictions_path
+    test_data = load_dataset('wikisql', split='test')
+
+    predictions = load_predictions_from_file(predictions_path)
     logger.info('All predictions were stored in memory ({} predictions in total).'.format(len(predictions)))
 
     db_file = 'data/test.db'
@@ -38,15 +49,16 @@ if __name__ == '__main__':
     row_no = 0
     wrong_ex_no = 0
     wrong_match_no = 0
-    exceptions = 0
+    all_exceptions = 0
+    invalid_column_exceptions = 0
 
     for row in test_data:
         row_no += 1
 
         if row_no % 100 == 0:
-            print('Row no.: {}, Wrong ex. no.: {}, Wrong match no.: {}, Exceptions so far: {}'.format(row_no, wrong_ex_no, wrong_match_no, exceptions))
+            print('Row no.: {}, Wrong ex. no.: {}, Wrong match no.: {}, Invalid column exceptions: {}, All exceptions: {}'.format(row_no, wrong_ex_no, wrong_match_no, invalid_column_exceptions, all_exceptions))
             print('Ex_accuracy: {}, Lf_accuracy: {}'.format(sum(grades) / len(grades), sum(exact_match) / len(exact_match)))
-            print('Full_ex_accuracy: {}, Full_lf_accuracy: {}\n'.format((sum(grades)) / (len(grades) + exceptions), (sum(exact_match)) / (len(exact_match) + exceptions)))
+            print('Full_ex_accuracy: {}, Full_lf_accuracy: {}\n'.format((sum(grades)) / (len(grades) + all_exceptions), (sum(exact_match)) / (len(exact_match) + all_exceptions)))
 
         # eliminate special char from where conditions
         row['sql']['conds']['condition'] = [cond.replace('\u2009', ' ') for cond in row['sql']['conds']['condition']]
@@ -74,9 +86,12 @@ if __name__ == '__main__':
         predicted_query = predictions[row_no - 1]
 
         try:
-            predicted_wikisql_format = encode_query_into_wikisql_sql_dict(predicted_query, row['table']['header'])
+            predicted_wikisql_format = WikiSQLFormatter.encode_query_into_wikisql_sql_dict(predicted_query, row['table']['header'])
         except Exception as e:
-            exceptions += 1
+            if str(e) == 'Invalid SQL human readable query.':
+                invalid_column_exceptions += 1
+
+            all_exceptions += 1
             continue
 
         predicted_wikisql_format.pop('human_readable')
@@ -106,6 +121,6 @@ if __name__ == '__main__':
         exact_match.append(match)
 
     print('\n----- FINAL METRICS -----')
-    print('Row no.: {}, Wrong ex. no.: {}, Wrong match no.: {}, Exceptions so far: {}'.format(row_no, wrong_ex_no, wrong_match_no, exceptions))
+    print('Row no.: {}, Wrong ex. no.: {}, Wrong match no.: {}, Invalid column exceptions: {}, All exceptions: {}'.format(row_no, wrong_ex_no, wrong_match_no, invalid_column_exceptions, all_exceptions))
     print('Ex_accuracy: {}, Lf_accuracy: {}'.format(sum(grades) / len(grades), sum(exact_match) / len(exact_match)))
-    print('Full_ex_accuracy: {}, Full_lf_accuracy: {}\n'.format((sum(grades)) / (len(grades) + exceptions), (sum(exact_match)) / (len(exact_match) + exceptions)))
+    print('Full_ex_accuracy: {}, Full_lf_accuracy: {}\n'.format((sum(grades)) / (len(grades) + all_exceptions), (sum(exact_match)) / (len(exact_match) + all_exceptions)))
