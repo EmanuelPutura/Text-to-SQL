@@ -4,7 +4,10 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, map, Observable, of} from "rxjs";
 import {ModelMetadata} from "../models";
 
-@Component({ templateUrl: 'home-page.component.html' })
+@Component({
+  templateUrl: 'home-page.component.html',
+  styleUrls: ['./home-page.component.css']
+})
 export class HomePageComponent {
   private readonly SERVER_URL = 'http://127.0.0.1:5000';
   private readonly SERVER_METADATA_ROUTE = '/pretrained_models_metadata'

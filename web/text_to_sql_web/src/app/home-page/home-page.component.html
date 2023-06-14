@@ -1,47 +1,56 @@
-<h2>Home page (you select a table schema from the ones already uploaded to the server)</h2>
+<div class="container">
+  <hr>
+  <h2>Home page (you select a table schema from the ones already uploaded to the server)</h2>
 
-Example1: Show me the age of all employees from company Facebook
-<br>
-Example2: Show me the last name of all employees from company Facebook being 22 years old
+  Example1: Show me the age of all employees from company Facebook
+  <br>
+  Example2: Show me the last name of all employees from company Facebook being 22 years old
 
-<br><br>
+  <br><br>
 
-<label for="natural_language_query">Natural language query: </label>
-<input type="text" id="natural_language_query" name="natural_language_query" [(ngModel)]="naturalLanguageQuery" style="width: 700px">
+  <label class="custom_label" for="natural_language_query">Natural language query: </label>
+  <input type="text" id="natural_language_query" name="natural_language_query" [(ngModel)]="naturalLanguageQuery" style="width: 700px">
 
-<br><br>
+  <br><br>
 
-<label for="select_pretrained">Pretrained model to use: </label>
-<select id="select_pretrained" name="select_pretrained" [(ngModel)]="selectedPretrainedModel" style="width: 700px">
-<option *ngFor="let option of this.getModelsMetadataList()" [value]="option.name" [selected]="option === getModelsMetadataList()[0]">{{option.name}}</option>
-</select>
+  <label class="custom_label" for="select_pretrained">Pretrained model to use: </label>
+  <select id="select_pretrained" name="select_pretrained" [(ngModel)]="selectedPretrainedModel" style="width: 700px">
+  <option *ngFor="let option of this.getModelsMetadataList()" [value]="option.name" [selected]="option === getModelsMetadataList()[0]">{{option.name}}</option>
+  </select>
 
-<br><br>
+  <br><br>
 
-<label for="select_table_schema">Table schema to use: </label>
-<select id="select_table_schema" name="select_table_schema" [(ngModel)]="selectedTableSchema" style="width: 700px">
-  <option *ngFor="let option of tableSchemas" [value]="option" [selected]="option === tableSchemas[0]">{{option}}</option>
-</select>
+  <label class="custom_label" for="select_table_schema">Table schema to use: </label>
+  <select id="select_table_schema" name="select_table_schema" [(ngModel)]="selectedTableSchema" style="width: 700px">
+    <option *ngFor="let option of tableSchemas" [value]="option" [selected]="option === tableSchemas[0]">{{option}}</option>
+  </select>
 
-<br><br>
+  <br><br>
 
-<label for="text_to_sql_result">Result: </label>
-<input type="text" id="text_to_sql_result" name="text_to_sql_result" style="width: 700px" readonly>
+  <label class="custom_label" for="text_to_sql_result">Result: </label>
+  <input type="text" id="text_to_sql_result" name="text_to_sql_result" style="width: 700px" readonly>
 
-<br><br>
+  <br><br>
 
-<button type="button" (click)="onSubmitQueryButton()" >Submit query</button>
+  <button type="button" (click)="onSubmitQueryButton()" >Submit query</button>
 
-<br><br>
-<hr>
-<br>
+  <br><br>
+  <hr>
+  <br>
 
-<label for="natural_language_query">Table schema file upload: </label>
-<br><br>
-<input type="file" (change)="onFileSelected($event)"/>
-<br><br>
-<button type="button" (click)="onSubmitTableSchemaButton()">Submit table schema</button>
+  <label class="custom_label" for="natural_language_query">Table schema file upload: </label>
 
-<br><br>
-<hr>
-<br>
+  <div class="button-container">
+    <label for="file-upload" class="custom-file-upload">
+      <i class="fa fa-cloud-upload"></i> Custom Upload
+    </label>
+
+    <input id="file-upload" type="file" (change)="onFileSelected($event)"/>
+    <br><br>
+    <button type="button" (click)="onSubmitTableSchemaButton()">Submit table schema</button>
+  </div>
+
+  <br><br>
+  <hr>
+  <br>
+</div>
