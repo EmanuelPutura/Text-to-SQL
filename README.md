@@ -44,7 +44,6 @@ This module consists of several other submodules, including a model training mod
 ## WikiSQL Benchmark <a name="wikisql_benchmark"></a>
 
 The evaluation strategy proposed in the original [WikiSQL paper](https://arxiv.org/abs/1709.00103) relies mainly on two metrics: **logical form accuracy** and **execution accuracy**.
-
 Let ***N*** be the size of the WikiSQL dataset, i.e., the total number of natural language queries that have to be translated to their corresponding SQL query. Additionally, consider ***N<sub>lf</sub>*** 
 to be the number of generated SQL queries that have an exact string match with the corresponding ground truth query, and let ***N<sub>ex</sub>*** be the number of generated SQL queries that, when 
 executed, result in the correct result. Then, the **logical form accuracy** is defined as
@@ -106,6 +105,6 @@ The model evaluation script can be executed using the following command, where t
 
 # Text-to-SQL Website <a name="website"></a>
 
-A simple website is developed to showcase the models, using a **Flask** backend and an **Angular** frontend.
+A simple website is developed to showcase the models, using a **Flask** backend and an **Angular** frontend:
 
  <p align="center"> <img src="https://github.com/EmanuelPutura/Text-to-SQL/blob/main/assets/website.png" height="500"/> </p>
