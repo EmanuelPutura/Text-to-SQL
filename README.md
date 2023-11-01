@@ -107,3 +107,5 @@ The model evaluation script can be executed using the following command, where t
 # Text-to-SQL Website <a name="website"></a>
 
 A simple website is developed to showcase the models, using a **Flask** backend and an **Angular** frontend.
+
+ <p align="center"> <img src="https://github.com/EmanuelPutura/Text-to-SQL/blob/main/assets/website.png" height="500"/> </p>
